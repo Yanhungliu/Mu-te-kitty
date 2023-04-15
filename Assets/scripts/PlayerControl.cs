@@ -30,13 +30,17 @@ public class PlayerControl : MonoBehaviour
     //attack
     public bool isAttack;
     public GameObject attackColi;
-    [SerializeField]
-    private float attackCooldownTimer;
+   
     //hurt
     public bool isHurt;
 
     //timer
-    private
+    private bool attackLock = false;
+    private float tempCoolDown;
+    public float coolDown;
+
+
+
     
     
 
@@ -46,6 +50,8 @@ public class PlayerControl : MonoBehaviour
         anim = GetComponent<Animator>();
         isRunHash = Animator.StringToHash("isRun");
         amountOfJumpsLeft = amountOfJumps;
+        tempCoolDown = coolDown;
+        
     }
     void Update()
     {
@@ -53,7 +59,13 @@ public class PlayerControl : MonoBehaviour
         CheckFace();
         UpdateAnim();
         CheckIfCanJump();
-        Attack();
+        
+
+        if (attackLock == true)
+        {
+            AttackTimer();
+        }
+        
     }
 
    
@@ -61,6 +73,7 @@ public class PlayerControl : MonoBehaviour
     {
         ApplyMove();
         CheckSurroundins();
+        Attack();
     }
     private void CheckInput()
     { 
@@ -152,19 +165,38 @@ public class PlayerControl : MonoBehaviour
         Gizmos.DrawSphere(groundCheck.position, groundCheckRadius);
     }
 
+    private void AttackTimer()
+    {
+        
+        tempCoolDown -= Time.deltaTime;
+
+        if (tempCoolDown <= 0)
+        {
+            attackLock = false;
+            tempCoolDown = coolDown;
+        }
+        else
+        {
+            attackLock = true;
+        }
+    }
+        
     private void Attack()
     {
-        if (Input.GetKey(KeyCode.LeftControl)  )
+        if (Input.GetKey(KeyCode.LeftControl) && !attackLock)
         {
-
+            
             isAttack = true;
             attackColi.SetActive(true);
+            Debug.Log("sugscell");
+            attackLock = true;
 
         }
         else
         {
             isAttack = false;
             attackColi.SetActive(false);
+
         }
 
     }
