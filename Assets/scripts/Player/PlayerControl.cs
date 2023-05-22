@@ -10,6 +10,7 @@ public class PlayerControl : MonoBehaviour
 
     private Rigidbody2D rb;
     private Animator anim;
+    private GameObject playerStates;
     
 
     private float isRun = 0.0f;
@@ -48,6 +49,7 @@ public class PlayerControl : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        playerStates = GameObject.Find("PlayerHp");
         isRunHash = Animator.StringToHash("isRun");
         amountOfJumpsLeft = amountOfJumps;
         tempCoolDown = coolDown;
@@ -59,22 +61,26 @@ public class PlayerControl : MonoBehaviour
         CheckFace();
         UpdateAnim();
         CheckIfCanJump();
-        
-
         if (attackLock == true)
         {
             AttackTimer();
         }
-        
+
+
+
+
     }
 
-   
+
     private void FixedUpdate()
     {
         ApplyMove();
         CheckSurroundins();
         Attack();
+
     }
+
+    
     private void CheckInput()
     { 
         moveDirection = Input.GetAxisRaw("Horizontal");
@@ -188,7 +194,7 @@ public class PlayerControl : MonoBehaviour
             
             isAttack = true;
             attackColi.SetActive(true);
-            Debug.Log("sugscell");
+            Debug.Log("Hit!!");
             attackLock = true;
 
         }
@@ -204,10 +210,12 @@ public class PlayerControl : MonoBehaviour
     //coil hit tag
     private  void OnCollisionEnter2D(Collision2D collision)
     {
-       if (collision.gameObject.tag=="Enemy" )
+       if (collision.gameObject.tag=="Enemy" ) //attack by enemy
         {
             isHurt = true;
+            playerStates.GetComponent<PlayerStates>().player_hp-=1;
 
+         
         }
         
       }
